@@ -1,4 +1,5 @@
 import time
+import random
 
 currentBot = 1
 from threadly import Threadly
@@ -6,7 +7,7 @@ from threadly import Threadly
 def worker(**kwargs):
     botID = kwargs["botID"]
     resultsQ = kwargs["resultsQ"]
-    time.sleep(2)
+    time.sleep(random.randint(1,15))
     resultsQ.put({"botID":botID, "time":time.time()})
 
 def workerKwargs():
@@ -37,11 +38,12 @@ testerkwargs = {"workerFunc":worker,
                 "delayBetweenThreads":0.1}
 testerkwargs2 = {"workerFunc":worker,
                 "workerKwargGenFunc":workerKwargs,
-                "lengthOfTest":15,
-                "numberOfThreads":2,
+                "lengthOfTest":20,
+                "numberOfThreads":20,
                 "finishFunc":finish,
                 "finishFuncKwargs":{"greeting":"Howdy"},
                 "delayBetweenThreads":0.1}
+random.seed()
 mytest.runTest(**testerkwargs2)
 
 print("Done")

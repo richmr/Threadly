@@ -113,6 +113,10 @@ class Threadly:
         while not testDone:
             try:
                 while self.countWorkerThreads() >= kwargs["numberOfThreads"]:
+                    if self.mode == self.MODE_TIME:
+                        # Need to keep timer bar moving in time mode if workers are slow to run
+                        countOfTotalTests = self.currentsw()
+                        startProgBar.update(math.floor(countOfTotalTests) - startProgBar.n)
                     time.sleep(0.01)
                 # generate next kwargs
                 workerKwargs = kwargs["workerKwargGenFunc"]()
@@ -151,7 +155,8 @@ class Threadly:
         logger.debug("Pre loop qsize: {}".format(resultsQ.qsize()))
         logger.debug("Pre loop threadStarted: {}".format(threadsStarted))
 
-        while resultsQ.qsize() < threadsStarted:
+        #while resultsQ.qsize() < threadsStarted:
+        while self.countWorkerThreads() > 0:
             finishProgBar.update(resultsQ.qsize() - finishProgBar.n)
             time.sleep(0.01)
 
